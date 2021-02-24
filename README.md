@@ -31,31 +31,54 @@ to process and return results, and `recode` to unescape html.
 * [recode](https://github.com/rrthomas/recode) - Charset converter tool and library.
 * [jq](https://github.com/stedolan/jq) - Command-line JSON processor.
 
+
+
 ## Installation
 
-### cURL
-cURL **tuxi** to your **$PATH** and give execute permissions.
-
-```sh
-$ sudo curl -sL "https://raw.githubusercontent.com/Bugswriter/tuxi/main/tuxi" -o /usr/local/bin/tuxi
-$ sudo chmod +x /usr/local/bin/tuxi
-```
-> To update, just do `curl` again, no need to `chmod` anymore.  
-> To uninstall, simply remove `tuxi` from your **$PATH**, for example `sudo rm -f /usr/local/bin/tuxi`.
 
 ### Make
 ```sh
-$ git clone https://github.com/Bugswriter/tuxi.git && cd tuxi/
+$ git clone https://github.com/spector-9/tuxi.git && cd tuxi/
 $ sudo make install
 ```
 > To update, just `git pull` on your local tuxi repository and reinstall with `sudo make install`.  
 > To uninstall, simply run `sudo make uninstall`.
 
-### Arch Linux AUR
-Tuxi is available as the [`tuxi-git`](https://aur.archlinux.org/packages/tuxi-git/) package in the **AUR**.
-```sh
-$ yay -S tuxi-git
+## After Installation
+
+Whoogle search is a deployable search engine. 
+Meaning you can deploy your own search engine environment or you can use the public instances listed on whoogle's git.
+
+### Easy Method
+* Find a Public Instance from [Whoogle's git](https://github.com/benbusby/whoogle-search#public-instances).
+* Replace the url with -u flag. Eg.
 ```
+tuxi -u url_here
+```
+no need to add https or www in the beginning.
+
+### Recommended Method
+**This is by no means difficult but it requires a little time to setup.**
+* Create an account on [Heroku](https://www.heroku.com/).
+* Deploy the search engine by following the instructions [here](https://github.com/benbusby/whoogle-search#install)
+* After deployment change the url using -u flag as described above.
+* You can deploy it anywhere if you don't want to use heroku.
+
+*Heroku apps become inactive after sometime which takes some time to reload so you can use cronjobs to setup automated pings*
+If you know how to use cronjobs then just add the following job
+```
+*/20 7-23 * * * /bin/curl -s https://<your heroku app name>.herokuapp.com > /dev/null
+```
+
+If you don't then
+* Install a cronjob manager like 'cronie'
+* run following commands
+```
+sudo systemctl enable --now cronie
+crontab -e
+```
+Now paste the line above & save.
+
 
 ## Usage
 
@@ -91,10 +114,6 @@ Report bugs at https://github.com/Bugswriter/tuxi/issues.
 ```
 
 ## Features
-
-**Easily change query language**
-Line 7 in `tuxi` contains the language variable which can be changed according the user's preference.
-However, tuxi will use the system default langauge if none is set.
 
 **Gives corrections**
 ```sh
