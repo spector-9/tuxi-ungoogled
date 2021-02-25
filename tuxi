@@ -15,7 +15,6 @@ help_text () {
     printf "  -u                    Change the current URL\n"
     printf "                        (change the URL for Whoogle's instance)"
     printf "\n"
-    printf "%bReport bugs at%b %bhttps://github.com/Bugswriter/tuxi/issues%b\n"  "$G" "$N"  "$C" "$N"
 }
 
 # Checks if dependencies are installed.
@@ -37,6 +36,11 @@ error_msg() {
     printf "%b%s%b\n"  "$R" "$*" "$N"
 }
 
+# Scrap HTML with external arguments
+snipcall() {
+    com="$(echo "$google_html" | eval "$@")"
+    [ -n "$com" ] && output "$com" && exit 0
+}
 
 #############################
 ##### Dependency check  #####
@@ -104,6 +108,8 @@ done
 shift $((OPTIND-1))
 
 
+# URl field check
+[ -z $current_url ] && echo "Url field empty. Use -u to add an URL" && exit 0
 #############################
 #####   Raw formatting  #####
 #############################
@@ -152,33 +158,25 @@ if [ $quiet = "false" ]; then
     did_you_mean="$(echo "$google_html" | pup 'div.MUxGbd.v0nnCb.lyLwlc a' | grep "<a href="|sed ':a;N;$!ba;s/\n/ /g'| recode html..ISO-8859-1| sed 's/^.*&q=//g; s/&spell.*$//g; s/+/ /g; s/\%2B/ /g')"
     [ -n "$did_you_mean" ] && info_msg "Did you mean $did_you_mean?"
 fi
-#Module to search for basic queries like (Christmas Day)
+
+#Module to search for basic queries like (Christmas Day, current date, weather)
 basic_f(){
-    # This is for search results with photos (eg. who is garfield)
-    basics="$(echo "$google_html" | pup '#main > div:nth-child(4) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) text{}' | recode html..ISO-8859-1 | tr -d '\n' | tr ' ' '\0'  | xargs -0 -n10)" 
-    [ -n "$basics" ] && output "$basics" && exit 0
-
-    basic="$(echo "$google_html" | pup 'html body div#main div div.ZINbbc.xpd.O9g5cc.uUPGi div div div div.kCrYT div div div div.BNeawe.iBp4i.AP7Wnd div div.BNeawe.iBp4i.AP7Wnd text{}'| recode html..ISO-8859-1)"
-    [ -n "$basic" ] && output "$basic" && exit 0
-
-    basic_1="$(echo "$google_html" | pup 'html body div#main div div.ZINbbc.xpd.O9g5cc.uUPGi div.kCrYT div div.BNeawe.s3v9rd.AP7Wnd div.Ap5OSd div.BNeawe.s3v9rd.AP7Wnd span.FCUp0c.rQMQod text{}'| head -n1 |recode html..ISO-8859-1)"
-    [ -n "$basic_1" ] && output "$basic_1" && exit 0
+    snipcall "pup '#main > div:nth-child(4) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) text{}' | recode html..ISO-8859-1 | tr -d '\n' | tr ' ' '\0'  | xargs -0 -n10" 
+    snipcall " pup 'html body div#main div div.ZINbbc.xpd.O9g5cc.uUPGi div div div div.kCrYT div div div div.BNeawe.iBp4i.AP7Wnd div div.BNeawe.iBp4i.AP7Wnd text{}'| recode html..ISO-8859-1| sed 's/Â//g'"
+    snipcall " pup 'html body div#main div div.ZINbbc.xpd.O9g5cc.uUPGi div.kCrYT div div.BNeawe.s3v9rd.AP7Wnd div.Ap5OSd div.BNeawe.s3v9rd.AP7Wnd span.FCUp0c.rQMQod text{}'| head -n1 |recode html..ISO-8859-1"
 
 }
 
 # Maths module to search for eg. ( what is 2+2 )
 math_f(){
-    math="$(echo "$google_html" | pup "#main > div:nth-child(4) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) text{}" | sed 's/\n\ //g' | recode html..ISO-8859-1)"
-    [ -n "$math" ] && output "$math" && exit 0
-    math="$(echo "$google_html" | pup '#main > div:nth-child(4) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) text{}' | sed 's/\n\ //g' | recode html..ISO-8859-1)"
-    [ -n "$math" ] && output "$math" && exit 0
+    snipcall " pup '#main > div:nth-child(4) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) text{}' | sed 's/\n\ //g' | recode html..ISO-8859-1"
+    snipcall " pup '#main > div:nth-child(4) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) text{}' | sed 's/\n\ //g' | recode html..ISO-8859-1"
 }
 
 
 knowledgeGraph_f(){
     # Knowledge Graph - right ( eg: the office )
-    kno_right="$(echo "$google_html" | pup 'div.kCrYT:nth-child(4) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) ' | recode html..ISO-8859-1 | sed '1d;$d' )"
-    [ -n "$kno_right" ] && output "$kno_right" && exit 0
+    snipcall " pup 'div.kCrYT:nth-child(4) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) ' | recode html..ISO-8859-1 | sed '1d;$d'| tr -d '\n' | tr ' ' '\0'  | xargs -0 -n10"
 
     #kno_top="$(echo "$google_html" | pup 'html body div#main div div.ZINbbc.xpd.O9g5cc.uUPGi div div div div.Xdlr0d div.idg8be a.BVG0Nb div div div.RWuggc.kCrYT json{}' | jq -r '.[] | .children | .[] | .text' | sed ':a;N;$!ba;s/\n/ /g;s/null/\n/g' | sed '1s/.*/* &/;2,$s/.*/*&/;$d' | recode html..ISO-8859-1)"
     #[ -n "$kno_top" ] && output "$kno_top" && exit 0
@@ -188,41 +186,31 @@ knowledgeGraph_f(){
     ln="$(echo "$kno_right" | grep -n "BNeawe" | grep 'span' | cut -d: -f1)"
     ln=$((ln - 1))
     [ $ln -gt 0 ] && kno_right="$(echo "$kno_right" | head -${ln})"
+    kno_right="$(echo "$kno_right" | tr -d '\n' | tr ' ' '\0'  | xargs -0 -n10)"
     [ -n "$kno_right" ] && output "$kno_right" && exit 0
 }
 
 richanswer_f(){
     # Rich Answers ( eg: elevation of mount everest )
-    rich="$(echo "$google_html" | pup 'html body div#main div div.ZINbbc.xpd.O9g5cc.uUPGi div.kCrYT div div.BNeawe.s3v9rd.AP7Wnd div.Ap5OSd div.BNeawe.s3v9rd.AP7Wnd span.FCUp0c.rQMQod' | head -n1 | recode html..ISO-8859-1)"
-    [ -n "$rich" ] && output "$rich" && exit 0
+    snipcall " pup 'html body div#main div div.ZINbbc.xpd.O9g5cc.uUPGi div.kCrYT div div.BNeawe.s3v9rd.AP7Wnd div.Ap5OSd div.BNeawe.s3v9rd.AP7Wnd span.FCUp0c.rQMQod' | head -n1 | recode html..ISO-8859-1"
 }
 
 lyrics_f(){
     # Lyrics ( eg: gecgecgec lyrics )
-    lyrics="$(echo "$google_html" | pup '#main > div:nth-child(4) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) text{}' | recode html..ISO-8859-1)"
-    [ -n "$lyrics" ] && output "$lyrics" && exit 0
+    snipcall " pup '#main > div:nth-child(4) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) text{}' | recode html..ISO-8859-1"
 }
 
-weather_f(){
-    # Weather ( eg: weather new york)
-    weather="$(echo "$google_html" | pup 'div.kvKEAb:nth-child(1) json{}' | jq -r '.. | .text?, .alt?'| sed '/null/d' |  sed '$!N; /^\(.*\)\n\1$/!P; D' | sed '4,5d;2s/.*/&ºC/;2,${N;s/\n/\t/;};3s/.*/&ºF/;$s/\t/\t\t/' | recode html..ISO-8859-1)"
-    [ -n "$weather" ] && output "$weather" && exit 0
-}
 
 conversions_f(){
     # Units Conversion ( eg: 1m into 1 cm )
-    unit="$(echo "$google_html" | pup '#main > div:nth-child(4) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) json{}' | jq -r '.[] | .children | .[0] | .value' | recode html..ISO-8859-1)"
-    [ -n "$unit" ] && output "$unit" && exit
-
+    snipcall " pup '#main > div:nth-child(4) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) json{}' | jq -r '.[] | .children | .[0] | .value' | recode html..ISO-8859-1"
     # Currency Conversion ( eg: 1 USD in rupee )
-    currency="$(echo "$google_html" | pup '#main > div:nth-child(4) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) text{}' | sed 's/\n//g;s/\ /\0/g' | recode html..ISO-8859-1)"
-    [ -n "$currency" ] && output "$currency" && exit
+    snipcall " pup '#main > div:nth-child(4) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) text{}' | sed 's/\n//g;s/\ /\0/g' | recode html..ISO-8859-1"
 }
 
 translations_f(){
     # Translate ( eg: Vais para cascais? em ingles )
-    trans="$(echo "$google_html" | pup '#main > div:nth-child(5) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) json{}' | jq -r '[.[] | .children | .[] | select(.class!="BCGytf")][1] | .text' | sed 's/null//g' | recode html..ISO-8859-1)"
-    [ -n "$trans" ] && output "$trans" && exit
+    snipcall " pup '#main > div:nth-child(5) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) json{}' | jq -r '[.[] | .children | .[] | select(.class!="BCGytf")][1] | .text' | sed 's/null//g' | recode html..ISO-8859-1"
 }
 
 # Snippets are prioritized according to their sequence below
@@ -231,6 +219,5 @@ basic_f
 math_f
 richanswer_f
 lyrics_f
-weather_f
 conversions_f
 translations_f
