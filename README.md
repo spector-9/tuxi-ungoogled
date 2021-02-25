@@ -2,10 +2,11 @@
 <p align="center">A CLI tool that scrapes Whoogle search results and SERPs that provides instant and concise answers</p>
 
 ```
-This is currently in beta as whoogle search relies on independent
-hosting and the result page does not use id's therefore we have to
-use CSS paths. Therefore an URL variable is created to change the 
-whoogle pubic instance quickly without changing anything else.
+This is currently in beta as whoogle search's
+result page does not use id's therefore we
+have to use CSS paths. Which are non-unique, 
+so its difficult to parse the result's.
+However it's still better than using google's trackers.
 ```
 
 ##  
