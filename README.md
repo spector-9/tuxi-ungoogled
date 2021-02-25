@@ -5,7 +5,7 @@
 This is currently in beta as whoogle search's
 result page does not use id's therefore we
 have to use CSS paths. Which are non-unique, 
-so its difficult to parse the result's.
+so its difficult to parse the results.
 However it's still better than using google's trackers.
 ```
 
