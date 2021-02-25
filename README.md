@@ -10,7 +10,7 @@ whoogle pubic instance quickly without changing anything else.
 
 ##  
 
-<img src="https://i.ibb.co/HqSdvfw/demo-fast.gif" alt="Video Preview Gif" align="right" width="500px"/>
+![Demo GIF](https://github.com/spector-9/tuxi/gif/demo.gif)
 
 ### How does this work?
 
@@ -56,7 +56,8 @@ Meaning you can deploy your own search engine environment or you can use the pub
 tuxi -u url_here
 ```
 
-<img src="https://i.ibb.co/dg1Fgvt/url.gif"alt="URL Preview Gif" align="center" width="500px"/>
+![URL GIF](https://github.com/spector-9/tuxi/gif/url.gif)
+
 no need to add https or www in the beginning.
 
 ### Recommended Method
