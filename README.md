@@ -10,7 +10,7 @@ whoogle pubic instance quickly without changing anything else.
 
 ##  
 
-<img src="https://i.ibb.co/sCwYpZ8/general.gif" alt="Video Preview Gif" align="right" width="500px"/>
+<img src="https://i.ibb.co/HqSdvfw/demo-fast.gif" alt="Video Preview Gif" align="right" width="500px"/>
 
 ### How does this work?
 
@@ -55,6 +55,8 @@ Meaning you can deploy your own search engine environment or you can use the pub
 ```
 tuxi -u url_here
 ```
+
+<img src="https://i.ibb.co/dg1Fgvt/url.gif"alt="URL Preview Gif" align="center" width="500px"/>
 no need to add https or www in the beginning.
 
 ### Recommended Method
@@ -109,8 +111,8 @@ Options:
                         (no pretty output, no colors)
   -q                    Only output search results.
                         (silences "Did you mean?", greeting, usage)
-
-Report bugs at https://github.com/Bugswriter/tuxi/issues.
+  -u                    Change the current URL
+                        (change the URL for Whoogle's instance)
 ```
 
 ## Features
