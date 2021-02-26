@@ -38,7 +38,7 @@ error_msg() {
 
 # Scrap HTML with external arguments
 snipcall() {
-    com="$(echo "$google_html" | eval "$@")"
+    com="$(echo "$google_html" | eval "$@" | sed 's/Â//g' )"
     [ -n "$com" ] && output "$com" && exit 0
 }
 
@@ -161,15 +161,16 @@ fi
 
 #Module to search for basic queries like (Christmas Day, current date, weather)
 basic_f(){
-    snipcall "pup '#main > div:nth-child(4) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) text{}' | recode html..ISO-8859-1 | tr -d '\n' | tr ' ' '\0'  | xargs -0 -n10" 
-    snipcall " pup 'html body div#main div div.ZINbbc.xpd.O9g5cc.uUPGi div div div div.kCrYT div div div div.BNeawe.iBp4i.AP7Wnd div div.BNeawe.iBp4i.AP7Wnd text{}'| recode html..ISO-8859-1| sed 's/Â//g'"
-    snipcall " pup 'html body div#main div div.ZINbbc.xpd.O9g5cc.uUPGi div.kCrYT div div.BNeawe.s3v9rd.AP7Wnd div.Ap5OSd div.BNeawe.s3v9rd.AP7Wnd span.FCUp0c.rQMQod text{}'| head -n1 |recode html..ISO-8859-1"
+    snipcall " pup 'html body div#main div div.ZINbbc.xpd.O9g5cc.uUPGi div div div div.kCrYT div div div div.BNeawe.iBp4i.AP7Wnd div div.BNeawe.iBp4i.AP7Wnd text{}'| recode html..ISO-8859-1 | head -n1 | sed 's/Â//g' "
+    snipcall " pup 'html body div#main div div.ZINbbc.xpd.O9g5cc.uUPGi div.kCrYT div div.BNeawe.s3v9rd.AP7Wnd div.Ap5OSd div.BNeawe.s3v9rd.AP7Wnd span.FCUp0c.rQMQod text{}'| head -n1 |recode html..ISO-8859-1 | sed 's/Â//g' "
+    snipcall "pup '#main > div:nth-child(4) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) text{}' | recode html..ISO-8859-1 |strings| tr -d '\n' | tr ' ' '\0'  | xargs -0 -n10" 
     snipcall "pup '#main > div:nth-child(4) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div text{}' | recode html..ISO-8859-1| strings | sed '1d;$d'| tr -d '\n' | tr ' ' '\0' | xargs -0 -n10 "
+    snipcall "pup '#main > div:nth-child(4) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) text{}' | recode html..ISO-8859-1 | strings"
 }
 
 # Maths module to search for eg. ( what is 2+2 )
 math_f(){
-    snipcall " pup '#main > div:nth-child(4) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) text{}' | sed 's/\n\ //g' | recode html..ISO-8859-1"
+    snipcall " pup '#main > div:nth-child(4) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) text{}' | sed 's/\n\ //g' |recode html..ISO-8859-1"
     snipcall " pup '#main > div:nth-child(4) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) text{}' | sed 's/\n\ //g' | recode html..ISO-8859-1"
 }
 
@@ -214,12 +215,19 @@ translations_f(){
 }
 
 # Snippets are prioritized according to their sequence below
+echo "knowledgeGraph_f"
 knowledgeGraph_f
-basic_f
+echo "math_f"
 math_f
-richanswer_f
+echo "lyrics_f"
 lyrics_f
+echo "basic_f"
+basic_f
+echo "richanswer_f"
+richanswer_f
+echo "conversions_f"
 conversions_f
+echo "translations_f"
 translations_f
 
 
