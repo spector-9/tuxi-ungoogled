@@ -215,19 +215,13 @@ translations_f(){
 }
 
 # Snippets are prioritized according to their sequence below
-echo "knowledgeGraph_f"
+
 knowledgeGraph_f
-echo "math_f"
 math_f
-echo "lyrics_f"
 lyrics_f
-echo "basic_f"
 basic_f
-echo "richanswer_f"
 richanswer_f
-echo "conversions_f"
 conversions_f
-echo "translations_f"
 translations_f
 
 
