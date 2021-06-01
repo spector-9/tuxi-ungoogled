@@ -1,4 +1,4 @@
-<h1 align="center">TUXI-UnGoogled</h1>
+<h1 align="center">TUXI-UnGoogled [Unmaintained]</h1>
 <p align="center">A CLI tool that scrapes Whoogle search results and SERPs that provides instant and concise answers</p>
 
 ```
